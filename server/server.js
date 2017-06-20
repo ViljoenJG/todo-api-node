@@ -6,7 +6,14 @@ const { Todo } = require('./models/todo');
 const { User } = require('./models/user');
 
 let app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+
+app.use((req, res, next) => {
+  const line = `${ req.method } ${ req.url }`;
+  log(line);
+
+  next();
+});
 
 app.use(bodyParser.json());
 
@@ -36,9 +43,16 @@ app.get('/todos', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Started on port: ${ port }`);
+  log(`Server is up on port ${ port }`)
 });
 
 module.exports = {
   app
 };
+
+function log(msg, level = 'info') {
+    const now = new Date().toString();
+    const line = `[${ level.toUpperCase() }] ${ now }: ${ msg }`;
+
+    console.log(line);
+}
