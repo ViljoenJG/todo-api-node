@@ -8,7 +8,7 @@ const todos = [{
   text: 'First test todo'
 }, {
   text: 'Second test todo'
-}]
+}];
 
 beforeEach((done) => {
   Todo.remove({})
@@ -16,7 +16,7 @@ beforeEach((done) => {
       return Todo.insertMany(todos);
     })
     .then(() => done())
-})
+});
 
 describe('POST /todos', () => {
   it('Should add a new todo', (done) => {
@@ -38,7 +38,7 @@ describe('POST /todos', () => {
           })
           .catch(err => done(err))
       })
-  })
+  });
 
   it('Should not create todo with invalid body', (done) => {
     request(app).post('/todos').send()
@@ -54,7 +54,7 @@ describe('POST /todos', () => {
           .catch(err => done(err))
       })
   })
-})
+});
 
 describe('GET /todos', () => {
   it('Should get all todos', (done) => {
@@ -66,4 +66,4 @@ describe('GET /todos', () => {
       })
       .end(done)
   })
-})
+});

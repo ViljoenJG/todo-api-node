@@ -17,14 +17,14 @@ app.post('/todos', (req, res) => {
     text,
     completed,
     completedAt
-  })
+  });
 
   todo.save().then(doc => {
     res.send(doc)
   }, (err) => {
     res.status(400).send(err)
   })
-})
+});
 
 app.get('/todos', (req, res) => {
   Todo.find()
@@ -33,12 +33,12 @@ app.get('/todos', (req, res) => {
     }, (err) => {
       res.status(400).send(err)
     })
-})
+});
 
 app.listen(port, () => {
   console.log(`Started on port: ${ port }`);
-})
+});
 
 module.exports = {
   app
-}
+};

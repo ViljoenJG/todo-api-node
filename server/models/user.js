@@ -8,6 +8,6 @@ let User = mongoose.model('User', {
     minlength: 1,
     trim: true
   }
-})
+});
 
-module.exports = { User }
+module.exports = { User };
