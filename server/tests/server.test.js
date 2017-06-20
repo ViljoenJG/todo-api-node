@@ -9,14 +9,10 @@ beforeEach((done) => {
 })
 
 describe('POST /todos', () => {
-  it('adding a new todo', (done) => {
+  it('Should add a new todo', (done) => {
     let text = 'Test todo text';
 
-    request(app)
-      .post('/todos')
-      .send({
-        text
-      })
+    request(app).post('/todos').send({ text })
       .expect(200)
       .expect((res) => {
         expect(res.body.text).toBe(text);
@@ -35,9 +31,7 @@ describe('POST /todos', () => {
   })
 
   it('Should not create todo with invalid body', (done) => {
-    request(app)
-      .post('/todos')
-      .send()
+    request(app).post('/todos').send()
       .expect(400)
       .end((err, res) => {
         if (err) return done(err);
