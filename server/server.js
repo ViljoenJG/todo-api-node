@@ -9,12 +9,12 @@ const { User } = require('./models/user');
 let app = express();
 const port = process.env.PORT || 3000;
 
-app.use((req, res, next) => {
-  const line = `${ req.method } ${ req.url }`;
-  log(line);
-
-  next();
-});
+// app.use((req, res, next) => {
+//   const line = `${ req.method } ${ req.url }`;
+//   log(line);
+//
+//   next();
+// });
 
 app.use(bodyParser.json());
 
@@ -47,7 +47,7 @@ app.get('/todos/:id', (req, res) => {
   const { id } = req.params;
 
   if (!id || !ObjectID.isValid(id)) {
-    return res.status(404).send();
+    return res.status(400).send();
   }
 
   Todo.findById(id)
