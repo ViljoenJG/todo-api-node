@@ -92,10 +92,10 @@ describe('GET /todos/:id', () => {
       .end(done)
   });
 
-  it('Should return 400 for invalid object ids', (done) => {
+  it('Should return 404 for invalid object ids', (done) => {
     request(app)
       .get('/todos/123')
-      .expect(400)
+      .expect(404)
       .expect((res) => {
         expect(res.body.data).toBe(undefined)
       })
