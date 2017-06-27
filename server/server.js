@@ -12,22 +12,14 @@ const { User } = require('./models/user');
 let app = express();
 const port = process.env.PORT;
 
-// app.use((req, res, next) => {
-//   const line = `${ req.method } ${ req.url }`;
-//   log(line);
-//
-//   next();
-// });
-
 app.use(bodyParser.json());
 
 app.post('/todos', (req, res) => {
-  const {text, completed, completedAt} = req.body;
+  const { text, completed } = _.pick(req.body, ['text', 'completed']);
 
   let todo = new Todo({
     text,
-    completed,
-    completedAt
+    completed
   });
 
   todo.save()
