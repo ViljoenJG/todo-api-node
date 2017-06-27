@@ -1,3 +1,5 @@
+const config = require('./config/config');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const _ = require('lodash');
@@ -8,7 +10,7 @@ const { Todo } = require('./models/todo');
 const { User } = require('./models/user');
 
 let app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 // app.use((req, res, next) => {
 //   const line = `${ req.method } ${ req.url }`;
@@ -76,14 +78,6 @@ app.delete('/todos/:id', (req, res) => {
     .catch(() => res.status(400).send())
 })
 
-app.listen(port, () => {
-  log(`Server is up on port ${ port }`)
-});
-
-module.exports = {
-  app
-};
-
 app.patch('/todos/:id', (req, res) => {
   const { id } = req.params;
   let body = _.pick(req.body, ['text', 'completed']);
@@ -106,6 +100,14 @@ app.patch('/todos/:id', (req, res) => {
     })
     .catch(() => res.status(400).send())
 })
+
+app.listen(port, () => {
+  log(`Server is up on port ${ port }`)
+});
+
+module.exports = {
+  app
+};
 
 function log(msg, level = 'info') {
     const now = new Date().toString();
