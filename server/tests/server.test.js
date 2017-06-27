@@ -148,18 +148,19 @@ describe('DELETE /todos/:id', () => {
 describe('PATCH /todos/:id', () => {
   it('should update a todo', (done) => {
     const id = todos[0]._id.toHexString();
+    const newText = 'New text after update'
 
     request(app)
       .patch(`/todos/${ id }`)
       .send({
         completed: true,
-        text: 'New text after update'
+        text: newText
       })
       .expect(200)
       .expect((res) => {
         const { text, completed, completedAt } = res.body.data;
 
-        expect(text).toBe('New text after update');
+        expect(text).toBeA('string').toBe(newText);
         expect(completed).toBeA('boolean').toBe(true);
         expect(completedAt).toBeA('number');
       })
@@ -168,18 +169,19 @@ describe('PATCH /todos/:id', () => {
 
   it('should clear completedAt when todo is not completed', (done) => {
     const id = todos[1]._id.toHexString();
+    const newText = 'New text after update'
 
     request(app)
       .patch(`/todos/${ id }`)
       .send({
-        text: 'New text after update',
+        text: newText,
         completed: false
       })
       .expect(200)
       .expect((res) => {
         const { text, completed, completedAt } = res.body.data;
 
-        expect(text).toBeA('string').toBe('New text after update');
+        expect(text).toBeA('string').toBe(newText);
         expect(completed).toBeA('boolean').toBe(false);
         expect(completedAt).toNotExist();
       })
