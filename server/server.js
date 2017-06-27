@@ -27,27 +27,26 @@ app.post('/todos', (req, res) => {
     completedAt
   });
 
-  todo.save().then(doc => {
-    res.send(doc)
-  }, (err) => {
-    res.status(400).send(err)
-  })
+  todo.save()
+    .then(doc => {
+      res.send(doc)
+    })
+    .catch(() => res.status(400).send())
 });
 
 app.get('/todos', (req, res) => {
   Todo.find()
     .then((data) => {
       res.send({ data })
-    }, (err) => {
-      res.status(400).send(err)
     })
+    .catch(() => res.status(400).send())
 });
 
 app.get('/todos/:id', (req, res) => {
   const { id } = req.params;
 
   if (!id || !ObjectID.isValid(id)) {
-    return res.status(400).send();
+    return res.status(404).send();
   }
 
   Todo.findById(id)
@@ -57,10 +56,24 @@ app.get('/todos/:id', (req, res) => {
       }
 
       res.send({ data });
-    }, (err) => {
-      res.status(400).send()
     })
+    .catch(() => res.status(400).send())
 });
+
+app.delete('/todos/:id', (req, res) => {
+  const { id } = req.params;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Todo.findByIdAndRemove(id)
+    .then((data) => {
+      if (!data) { return res.status(404).send(); }
+      res.status(200).send({ data });
+    })
+    .catch(() => res.status(400).send())
+})
 
 app.listen(port, () => {
   log(`Server is up on port ${ port }`)
