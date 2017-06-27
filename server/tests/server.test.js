@@ -10,7 +10,9 @@ const todos = [{
   text: 'First test todo'
 }, {
   _id: new ObjectID(),
-  text: 'Second test todo'
+  text: 'Second test todo',
+  completed: true,
+  completedAt: 333
 }];
 
 beforeEach((done) => {
@@ -79,10 +81,10 @@ describe('GET /todos/:id', () => {
       .get(`/todos/${ id }`)
       .expect(200)
       .expect((res) => {
-        const { data } = res.body;
+        const { _id, text } = res.body.data;
 
-        expect(data._id).toBe(id);
-        expect(data.text).toBe('First test todo');
+        expect(_id).toBe(id);
+        expect(text).toBe('First test todo');
       })
       .end(done)
   });
@@ -113,10 +115,10 @@ describe('DELETE /todos/:id', () => {
       .delete(`/todos/${ id }`)
       .expect(200)
       .expect((res) => {
-        const { data } = res.body;
+        const { _id, text } = res.body.data;
 
-        expect(data._id).toBe(id);
-        expect(data.text).toBe('Second test todo');
+        expect(_id).toBe(id);
+        expect(text).toBe('Second test todo');
       })
       .end((err, res) => {
         if (err) { return done(err); }
@@ -140,5 +142,47 @@ describe('DELETE /todos/:id', () => {
         .delete('/todos/123abc')
         .expect(404)
         .end(done)
+  })
+})
+
+describe('PATCH /todos/:id', () => {
+  it('should update a todo', (done) => {
+    const id = todos[0]._id.toHexString();
+
+    request(app)
+      .patch(`/todos/${ id }`)
+      .send({
+        completed: true,
+        text: 'New text after update'
+      })
+      .expect(200)
+      .expect((res) => {
+        const { text, completed, completedAt } = res.body.data;
+
+        expect(text).toBe('New text after update');
+        expect(completed).toBeA('boolean').toBe(true);
+        expect(completedAt).toBeA('number');
+      })
+      .end(done)
+  })
+
+  it('should clear completedAt when todo is not completed', (done) => {
+    const id = todos[1]._id.toHexString();
+
+    request(app)
+      .patch(`/todos/${ id }`)
+      .send({
+        text: 'New text after update',
+        completed: false
+      })
+      .expect(200)
+      .expect((res) => {
+        const { text, completed, completedAt } = res.body.data;
+
+        expect(text).toBeA('string').toBe('New text after update');
+        expect(completed).toBeA('boolean').toBe(false);
+        expect(completedAt).toNotExist();
+      })
+      .end(done)
   })
 })
