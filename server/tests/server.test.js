@@ -247,7 +247,28 @@ describe('POST /users', () => {
       .end(done)
   })
 
+  it('should return validation error if password is invalid', (done) => {
+    request(app)
+      .post('/users')
+      .send({
+        email: 'valid@email.com',
+        password: 'not'
+      })
+      .expect(400)
+      .expect((res) => {
+        expect(res.body).toEqual({})
+      })
+      .end(done)
+  })
+
   it('should not create user if email is in use', (done) => {
-    done()
+    request(app)
+      .post('/users')
+      .send({
+        email: users[0].email,
+        password: 'someStrongPassword'
+      })
+      .expect(400)
+      .end(done)
   })
 })
