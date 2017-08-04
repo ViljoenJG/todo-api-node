@@ -120,9 +120,11 @@ app.post('/users/login', (req, res) => {
   const { email, password } = _.pick(req.body, ['email', 'password']);
 
   User.findByCredentials(email, password)
-    .then((user) => user.generateAuthToken().then(token => {
-      return res.header('x-auth', token).send(user)
-    }))
+    .then((user) => {
+      return user.generateAuthToken().then(token => {
+        return res.header('x-auth', token).send(user)
+      })
+    })
     .catch(() => res.status(401).send())
 })
 
