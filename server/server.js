@@ -3,6 +3,7 @@ const config = require('./config/config');
 const express = require('express');
 const bodyParser = require('body-parser');
 const _ = require('lodash');
+const bcrypt = require('bcryptjs');
 
 const { mongoose } = require('./db/mongoose');
 const { ObjectID } = require('mongodb');
@@ -114,6 +115,23 @@ app.post('/users', (req, res) => {
 
 app.get('/users/me', authenticate, (req, res) => {
   res.send(req.user);
+})
+
+app.post('/users/login', (req, res) => {
+  const { email, password } = _.pick(req.body, ['email', 'password']);
+
+  User.findOne({email})
+    .then((user) => {
+      bcrypt.compare(password, user.password, (err, match) => {
+        if (match) {
+          res.send(_.pick(user, ['_id', 'email']));
+        } else {
+          return Promise.reject();
+        }
+      })
+    })
+    .catch(() => res.status(401).send())
+
 })
 
 app.listen(port, () => {
