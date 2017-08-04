@@ -14,6 +14,10 @@ const port = process.env.PORT;
 
 app.use(bodyParser.json());
 
+/******************
+*   Todo Routes
+*******************/
+
 app.post('/todos', (req, res) => {
   const { text, completed } = _.pick(req.body, ['text', 'completed']);
 
@@ -68,7 +72,7 @@ app.delete('/todos/:id', (req, res) => {
       res.status(200).send({ data });
     })
     .catch(() => res.status(400).send())
-})
+});
 
 app.patch('/todos/:id', (req, res) => {
   const { id } = req.params;
@@ -91,6 +95,19 @@ app.patch('/todos/:id', (req, res) => {
       res.send({ data })
     })
     .catch(() => res.status(400).send())
+});
+
+/******************
+*   Todo Routes
+*******************/
+
+app.post('/users', (req, res) => {
+  const body = _.pick(req.body, ['email', 'password']);
+  const user = new User(body);
+
+  user.save()
+    .then(doc => res.send(doc))
+    .catch(err => res.status(400).send(err));
 })
 
 app.listen(port, () => {
