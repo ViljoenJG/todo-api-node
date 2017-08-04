@@ -15,6 +15,13 @@ const port = process.env.PORT;
 
 app.use(bodyParser.json());
 
+app.use((req, res, next) => {
+  const line = `${ req.method } ${ req.url }`;
+  log(line);
+
+  next();
+});
+
 /******************
 *   Todo Routes
 *******************/
