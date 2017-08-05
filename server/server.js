@@ -29,12 +29,13 @@ app.use((req, res, next) => {
 *   Todo Routes
 *******************/
 
-app.post('/todos', (req, res) => {
+app.post('/todos', authenticate, (req, res) => {
   const { text, completed } = _.pick(req.body, ['text', 'completed']);
 
   let todo = new Todo({
     text,
-    completed
+    completed,
+    _creator: req.user._id
   });
 
   todo.save()
@@ -44,30 +45,29 @@ app.post('/todos', (req, res) => {
     .catch(() => res.status(400).send())
 });
 
-app.get('/todos', (req, res) => {
-  Todo.find()
-    .then((data) => {
-      res.send({ data })
-    })
+app.get('/todos', authenticate, (req, res) => {
+  Todo.find({ _creator: req.user._id })
+    .then((data) => res.send({ data }))
     .catch(() => res.status(400).send())
 });
 
-app.get('/todos/:id', (req, res) => {
+app.get('/todos/:id', authenticate, (req, res) => {
   const { id } = req.params;
 
   if (!id || !ObjectID.isValid(id)) {
     return res.status(404).send();
   }
 
-  Todo.findById(id)
-    .then((data) => {
-      if (!data) {
-        return res.status(404).send();
-      }
+  Todo.findOne({
+    _id: id,
+    _creator: req.user._id
+  }).then((data) => {
+    if (!data) {
+      return res.status(404).send();
+    }
 
-      res.send({ data });
-    })
-    .catch(() => res.status(400).send())
+    res.send({ data });
+  }).catch(() => res.status(400).send())
 });
 
 app.delete('/todos/:id', (req, res) => {
