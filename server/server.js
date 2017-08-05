@@ -9,6 +9,7 @@ const { ObjectID } = require('mongodb');
 const { Todo } = require('./models/todo');
 const { User } = require('./models/user');
 const { authenticate } = require('./middleware/authenticate');
+const env = process.env.NODE_ENV || 'development';
 
 let app = express();
 const port = process.env.PORT;
@@ -16,8 +17,10 @@ const port = process.env.PORT;
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-  const line = `${ req.method } ${ req.url }`;
-  log(line);
+  if (env !== 'test') {
+    const line = `${ req.method } ${ req.url }`;
+    log(line);
+  }
 
   next();
 });
