@@ -86,7 +86,7 @@ app.delete('/todos/:id', authenticate, (req, res) => {
   }).catch(() => res.status(400).send())
 });
 
-app.patch('/todos/:id', (req, res) => {
+app.patch('/todos/:id', authenticate, (req, res) => {
   const { id } = req.params;
   let body = _.pick(req.body, ['text', 'completed']);
 
@@ -101,7 +101,12 @@ app.patch('/todos/:id', (req, res) => {
     body.completedAt = null;
   }
 
-  Todo.findByIdAndUpdate(id, { $set: body }, { new: true} )
+  const filter = {
+    _id: id,
+    _creator: req.user._id
+  };
+
+  Todo.findOneAndUpdate(filter, { $set: body }, { new: true} )
     .then((data) => {
       if (!data) { return res.status(404).send(); }
       res.send({ data })
@@ -110,7 +115,7 @@ app.patch('/todos/:id', (req, res) => {
 });
 
 /******************
-*   Todo Routes
+*   Users Routes
 *******************/
 
 app.post('/users', (req, res) => {
