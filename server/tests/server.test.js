@@ -122,6 +122,7 @@ describe('DELETE /todos/:id', () => {
 
     request(app)
       .delete(`/todos/${ id }`)
+      .set('x-auth', users[1].tokens[0].token)
       .expect(200)
       .expect((res) => {
         const { _id, text } = res.body.data;
@@ -142,6 +143,7 @@ describe('DELETE /todos/:id', () => {
   it('Should return 404 if todo is not found', (done) => {
       request(app)
         .delete(`/todos/${ new ObjectID().toHexString() }`)
+        .set('x-auth', users[1].tokens[0].token)
         .expect(404)
         .end(done)
   })
@@ -149,6 +151,7 @@ describe('DELETE /todos/:id', () => {
   it('Should return 404 if object id is invalid', (done) => {
       request(app)
         .delete('/todos/123abc')
+        .set('x-auth', users[1].tokens[0].token)
         .expect(404)
         .end(done)
   })

@@ -70,19 +70,20 @@ app.get('/todos/:id', authenticate, (req, res) => {
   }).catch(() => res.status(400).send())
 });
 
-app.delete('/todos/:id', (req, res) => {
+app.delete('/todos/:id', authenticate, (req, res) => {
   const { id } = req.params;
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
   }
 
-  Todo.findByIdAndRemove(id)
-    .then((data) => {
-      if (!data) { return res.status(404).send(); }
-      res.status(200).send({ data });
-    })
-    .catch(() => res.status(400).send())
+  Todo.findOneAndRemove({
+    _id: id,
+    _creator: req.user._id
+  }).then((data) => {
+    if (!data) { return res.status(404).send(); }
+    res.status(200).send({ data });
+  }).catch(() => res.status(400).send())
 });
 
 app.patch('/todos/:id', (req, res) => {
